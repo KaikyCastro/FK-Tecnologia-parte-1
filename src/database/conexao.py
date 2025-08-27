@@ -1,5 +1,5 @@
-import psycopg2
 import os
+import psycopg2
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -10,24 +10,25 @@ if PASSWORD is None:
 
 class BancoDeDados:
     def __init__(self):
+        None
+    
+    def conectar(self):
         try:
             self.conexao = psycopg2.connect(
                 host="localhost",
                 database="fk_tecnologia",
                 user="kaikycastro",
                 password=PASSWORD
-            )
+            )   
+            return self.conexao
         except psycopg2.Error as e:
             print(f"Erro ao conectar ao banco de dados: {e}")
             self.conexao = None
 
-    def fechar_conexao(self):
+    def desconectar(self):
         if self.conexao:
             self.conexao.close()
             self.conexao = None
             print("Conexão fechada com sucesso.")
         else:
             print("Nenhuma conexão ativa para fechar.")
-
-
-    

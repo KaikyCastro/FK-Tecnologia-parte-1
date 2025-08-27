@@ -1,8 +1,8 @@
-from Models import Banco_de_dados
+from database import conexao
 
-banco = Banco_de_dados.BancoDeDados()
+banco = conexao.BancoDeDados()
 
 
-if banco.conexao:
+if banco.conectar():
     print("Conexão bem-sucedida ao banco de dados.")
-    banco.fechar_conexao()
+    banco.desconectar()
