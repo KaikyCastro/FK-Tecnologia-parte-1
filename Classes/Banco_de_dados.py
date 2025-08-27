@@ -8,8 +8,6 @@ if PASSWORD is None:
     print("Erro: A variável de ambiente 'PASSWORD' não está definida.")
     exit()
 
-
-
 class BancoDeDados:
     def __init__(self):
         try:

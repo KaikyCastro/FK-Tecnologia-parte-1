@@ -1,6 +1,6 @@
+from Classes import Banco_de_dados
 
-
-banco = BancoDeDados()
+banco = Banco_de_dados.BancoDeDados()
 
 
 if banco.conexao:
