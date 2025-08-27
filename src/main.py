@@ -1,4 +1,4 @@
-from Classes import Banco_de_dados
+from Models import Banco_de_dados
 
 banco = Banco_de_dados.BancoDeDados()
 
