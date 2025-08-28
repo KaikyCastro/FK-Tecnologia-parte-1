@@ -27,11 +27,21 @@ class Consulta:
         self.cursor.close()
         self.conexao.close()
 
-    def remover(self):
-        None
+    def remover(self, modelo):
+        self.cursor = self.conexao.cursor()
+        self.cursor.execute(f"DELETE FROM produto WHERE modelo = '{modelo}'")
+        self.conexao.commit()
+        self.cursor.close()
+        self.conexao.close()
 
     def listar_todos(self):
-        None
+        self.cursor = self.conexao.cursor()
+        self.cursor.execute("SELECT * FROM produto")
+        resultado = self.cursor.fetchall()
+        for linha in resultado:
+            print(linha)
+        self.cursor.close()
+        self.conexao.close()
 
-    def exibir(self):
+    def exibir_um(self):
         None
