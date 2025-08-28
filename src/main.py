@@ -1,8 +1,6 @@
-from database import conexao
+from database.consulta import Consulta
 
-banco = conexao.BancoDeDados()
-
-
-if banco.conectar():
-    print("Conexão bem-sucedida ao banco de dados.")
-    banco.desconectar()
+if __name__ == "__main__":
+    consulta = Consulta()
+    #consulta.inserir("iPhone 13", "Apple", "Smartphone", 799.99, 50, 4.8)
+    consulta.pesquisar("Kaiky")
