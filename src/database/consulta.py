@@ -15,8 +15,15 @@ class Consulta:
         self.cursor.close()
         self.conexao.close()
 
-    def alterar(self):
-        None
+    def alterar_modelo(self, modelo_antigo, modelo_novo):
+        self.cursor = self.conexao.cursor()
+        self.cursor.execute(f"SELECT * FROM produto WHERE modelo = '{modelo_antigo}'")
+        resultado = self.cursor.fetchall()
+        self.cursor.execute(f"UPDATE produto SET modelo = '{modelo_novo}' WHERE id = {resultado[0][0]}")
+        self.conexao.commit()
+        self.cursor.close()
+        self.conexao.close()
+        
     
     def pesquisar(self, modelo):
         self.cursor = self.conexao.cursor()
