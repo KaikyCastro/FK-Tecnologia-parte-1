@@ -25,10 +25,18 @@ class BancoDeDados:
             print(f"Erro ao conectar ao banco de dados: {e}")
             self.conexao = None
 
-    def desconectar(self):
+    def desconectar(self, cursor):
         if self.conexao:
             self.conexao.close()
             self.conexao = None
             print("Conexão fechada com sucesso.")
         else:
             print("Nenhuma conexão ativa para fechar.")
+
+        self.cursor = cursor
+        if self.cursor:
+            self.cursor.close()
+            self.cursor = None
+            print("Cursor fechado com sucesso.")
+        else:
+            print("Nenhum cursor ativo para fechar.")
