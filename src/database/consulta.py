@@ -1,5 +1,6 @@
-from database.conexao import BancoDeDados
+from .conexao import BancoDeDados
 from psycopg2.errors import UniqueViolation
+
 class Consulta:
     def __init__(self):
         self.db = BancoDeDados()
