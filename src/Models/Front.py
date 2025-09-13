@@ -1,5 +1,8 @@
 import customtkinter
 from PIL import Image
+from tkinter import END
+from .Produto import Produto
+from database.Conexao import ConexaoBD
 class FrontModel(customtkinter.CTk):
     def __init__(self):
         super().__init__()
@@ -8,6 +11,12 @@ class FrontModel(customtkinter.CTk):
         self.resizable(False, False)
         self._fg_color = "#FFFFFF"
         self._set_appearance_mode("light")
+        self.conn = ConexaoBD()
+        self.conexao = self.conn.conectar()
+        if self.conexao:
+            print("Conexão ao banco de dados realizada com sucesso.")
+        else:
+            print("Falha na conexão ao banco de dados.")
         self.tela_inicial()
         
 
