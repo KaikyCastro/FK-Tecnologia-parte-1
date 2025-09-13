@@ -124,7 +124,8 @@ class FrontModel(customtkinter.CTk):
                                                         text_color="#060505",
                                                         bg_color="#FFFFFF",
                                                         width=250,
-                                                        height=200)
+                                                        height=200,
+                                                        command=self.pagina_remover_produto)
         self.remover_produto.place(x=100, y=400)
         self.bind("<F4>", lambda event: self.pagina_remover_produto())
 
@@ -352,7 +353,27 @@ class FrontModel(customtkinter.CTk):
         None
 
     def pagina_remover_produto(self):
-        None
+        self.dialog_remover = customtkinter.CTkInputDialog(text="Digite o modelo do produto que deseja remover:", title="Remover Produto")
+        input_user = self.dialog_remover.get_input()
+        try:
+            if input_user == "":
+                raise ValueError("O campo 'Modelo' deve ser preenchido.")
+        except ValueError as ve:
+            messagebox.showerror("Erro de Validação", str(ve))
+            return
+        if input_user:
+            modelo = input_user.capitalize()
+            if modelo:
+                resultado = self.produto.pesquisar_modelo_produto(modelo)
+                if resultado:
+                    confirm = messagebox.askyesno("Confirmação", f"Tem certeza que deseja remover o produto '{modelo}'?")
+                    if confirm:
+                        self.produto.remover_produto(modelo)
+                        messagebox.showinfo("Remoção Bem Sucedida", f"O produto '{modelo}' foi removido com sucesso.")
+                    else:
+                        messagebox.showinfo("Remoção Cancelada", "A remoção do produto foi cancelada.")
+                else:
+                    messagebox.showinfo("Produto Não Encontrado", f"Nenhum produto encontrado com o modelo '{modelo}'.")
 
     def pagina_listar_todos_produtos(self):
 
