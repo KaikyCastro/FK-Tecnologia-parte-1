@@ -8,11 +8,11 @@ if PASSWORD is None:
     print("Erro: A variável de ambiente 'PASSWORD' não está definida.")
     exit()
 
-class BancoDeDados:
+class ConexaoBD:
     def __init__(self):
         None
     
-    def conectar(self):
+    def conectar(self) -> psycopg2.extensions.connection:
         try:
             self.conexao = psycopg2.connect(
                 host="localhost",

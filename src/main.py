@@ -1,10 +1,9 @@
 from Models.front import FrontModel
-from database.consulta import Consulta
+from Models.Produto import Produto
 
 
 if __name__ == "__main__":
-    consulta = Consulta()
-    #consulta.inserir("iPhone 13", "Apple", "Smartphone", 799.99, 50, 4.8)
+    produto = Produto("iPhone 13", "Apple", "Smartphone", 799.99, 50, 4.8)
     #consulta.pesquisar("Kaiky")
     #consulta.listar_todos()
     #consulta.remover("iPhone 13")
@@ -15,7 +14,7 @@ if __name__ == "__main__":
     #consulta.alterar_quant("iPhone 13", 45)
     #consulta.alterar_nota("iPhone 13", 4.9)
     #consulta.inserir("Galaxy S21", "Samsung", "Smartphone", 699.99, 30, 4.6)
-    consulta.listar_todos()
+    produto.listar_todos()
     #consulta.inserir("Book 4", "Samsung", "Notebook", 3499.99, 20, 4.7)
 
     #app = FrontModel()
