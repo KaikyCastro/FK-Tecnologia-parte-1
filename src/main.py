@@ -1,8 +1,18 @@
 from Models.Front import FrontModel
 from Models.Produto import Produto
+from database.Conexao import ConexaoBD
 
 
 if __name__ == "__main__":
+
+    conn = ConexaoBD()
+    conexao = conn.conectar()
+    if conexao:
+        print("Conexão bem-sucedida ao banco de dados.")
+    else:
+        print("Falha na conexão ao banco de dados.")
+
+
     produto = Produto("iPhone 13", "Apple", "Smartphone", 799.99, 50, 4.8)
     #consulta.pesquisar("Kaiky")
     #consulta.listar_todos()
@@ -19,3 +29,6 @@ if __name__ == "__main__":
 
     #app = FrontModel()
     #app.mainloop()
+
+    conn.desconectar()
+    print("Programa finalizado.")
