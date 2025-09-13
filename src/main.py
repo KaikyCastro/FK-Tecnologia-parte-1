@@ -4,7 +4,6 @@ from database.Conexao import ConexaoBD
 
 
 if __name__ == "__main__":
-
     conn = ConexaoBD()
     conexao = conn.conectar()
     if conexao:
@@ -13,23 +12,12 @@ if __name__ == "__main__":
         print("Falha na conexão ao banco de dados.")
 
 
-    produto = Produto()
-    produto.inserir_produto("Samsung Book 4", "Samsung", "Notebook", 3499.99, 20, 4.7, conexao)
-    #consulta.pesquisar("Kaiky")
-    #consulta.listar_todos()
-    #consulta.remover("iPhone 13")
-    #consulta.alterar_modelo("iPhone 13", "iPhone 14")
-    #consulta.alterar_marca("iPhone 13", "Apple Inc.")
-    #consulta.alterar_categoria("iPhone 13", "Celular")
-    #consulta.alterar_preco("iPhone 13", 899.99)
-    #consulta.alterar_quant("iPhone 13", 45)
-    #consulta.alterar_nota("iPhone 13", 4.9)
-    #consulta.inserir("Galaxy S21", "Samsung", "Smartphone", 699.99, 30, 4.6)
-    produto.listar_todos_produtos(conexao)
-    #consulta.inserir("Book 4", "Samsung", "Notebook", 3499.99, 20, 4.7)
-
-    #app = FrontModel()
-    #app.mainloop()
-
+    #produto = Produto()
+    #produto.inserir_produto("Samsung Book 4", "Samsung", "Notebook", 3499.99, 20, 4.7, conexao)
+    #produto.listar_todos_produtos(conexao)
+    #produto.pesquisar_modelo_produto("Samsung Book 4", conexao)
+    app = FrontModel()
+    app.mainloop()
+    
     conn.desconectar()
     print("Programa finalizado.")
