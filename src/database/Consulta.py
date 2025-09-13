@@ -1,4 +1,4 @@
-from .conexao import ConexaoBD
+from .Conexao import ConexaoBD
 from psycopg2.errors import UniqueViolation
 
 class Consulta:

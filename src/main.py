@@ -1,4 +1,4 @@
-from Models.front import FrontModel
+from Models.Front import FrontModel
 from Models.Produto import Produto
 
 

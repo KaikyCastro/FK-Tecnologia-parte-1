@@ -1,4 +1,4 @@
-from database.consulta import Consulta
+from database.Consulta import Consulta
 
 class Produto:
     def __init__(self, modelo, marca, categoria, preco, quant, nota):
