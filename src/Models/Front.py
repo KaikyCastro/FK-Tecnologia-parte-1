@@ -2,7 +2,6 @@ import customtkinter
 from PIL import Image
 from tkinter import END, messagebox
 from .Produto import Produto
-from string import capwords
 
 class FrontModel(customtkinter.CTk):
     def __init__(self):
@@ -348,9 +347,9 @@ class FrontModel(customtkinter.CTk):
             messagebox.showerror("Erro de Validação", str(ve))
             return
 
-        modelo = self.entry_modelo.get().capitalize()
-        marca = self.entry_marca.get().capitalize()
-        categoria = self.entry_categoria.get().capitalize()
+        modelo = self.entry_modelo.get().title()
+        marca = self.entry_marca.get().title()
+        categoria = self.entry_categoria.get().title()
         preco = self.entry_preco.get()
         quant = self.entry_quant.get()
         nota = self.entry_nota.get()
@@ -387,7 +386,7 @@ class FrontModel(customtkinter.CTk):
                                                             font=("Montserrat Medium", 20),
                                                             text_color="#000000",
                                                             fg_color="#FFFFFF")
-        self.label_modelo_antigo.place(x=100, y=150)
+        self.label_modelo_antigo.place(x=100, y=152)
 
         self.entry_modelo_antigo = customtkinter.CTkEntry(self.frame_alterar,
                                                             width=400,
@@ -399,12 +398,193 @@ class FrontModel(customtkinter.CTk):
                                                             text_color="#000000")
         self.entry_modelo_antigo.place(x=600, y=150)
 
+        self.button_procurar_produto = customtkinter.CTkButton(self.frame_alterar,
+                                                                   text="Procurar",
+                                                                   font=("Montserrat Medium", 20),
+                                                                   fg_color="#818181",
+                                                                   hover_color="#9C9C9C",
+                                                                   text_color="#000000",
+                                                                   bg_color="#FFFFFF",
+                                                                   width=150,
+                                                                   height=40,
+                                                                   command=self.button_alterar_produto)
+        self.button_procurar_produto.place(x=1050, y=150)
+        self.bind("<Return>", lambda event: self.button_alterar_produto())        
 
+        self.button_voltar_alterar = customtkinter.CTkButton(self.frame_alterar,
+                                                        text="Voltar",
+                                                        font=("Montserrat Medium", 20),
+                                                        fg_color="#818181",
+                                                        hover_color="#9C9C9C",
+                                                        text_color="#060505",
+                                                        bg_color="#FFFFFF",
+                                                        width=100,
+                                                        height=40,
+                                                        command=self.tela_menu)
+        self.button_voltar_alterar.place(x=50, y=650)
+        self.bind("<Escape>", lambda event: self.tela_menu())
 
+    def button_alterar_produto(self):
+        try:
+            if self.entry_modelo_antigo.get() == "":
+                raise ValueError("O campo 'Modelo' deve ser preenchido.")
+            if not self.produto.pesquisar_modelo_produto(self.entry_modelo_antigo.get().title()):
+                raise ValueError("Modelo não encontrado. Verifique o modelo e tente novamente.")
+        except ValueError as ve:
+            messagebox.showerror("Erro de Validação", str(ve))
+            return
+
+        modelo_antigo = self.entry_modelo_antigo.get().title()
+        resultado = self.produto.pesquisar_modelo_produto(modelo_antigo)
+    
+        self.frame_alterar_dados = customtkinter.CTkFrame(self.frame_alterar,
+                                                            width=1100,
+                                                            height=400,
+                                                            fg_color="#D9D9D9")
+        self.frame_alterar_dados.place(x=90, y=230)
+
+        self.label_instrucoes = customtkinter.CTkLabel(self.frame_alterar_dados,
+                                                        text="Altere os dados do produto abaixo:",
+                                                        font=("Montserrat Medium", 20),
+                                                        text_color="#000000",
+                                                        fg_color="#D9D9D9")
+        self.label_instrucoes.place(relx=0.5, y=10, anchor="n")
+
+        self.label_modelo = customtkinter.CTkLabel(self.frame_alterar_dados,
+                                                    text="Modelo:",
+                                                    font=("Montserrat Medium", 20),
+                                                    text_color="#000000",
+                                                    fg_color="#D9D9D9")
+        self.label_modelo.place(x=50, y=70)
+
+        self.entry_modelo = customtkinter.CTkEntry(self.frame_alterar_dados,
+                                                    font=("Montserrat Medium", 20),
+                                                    text_color="#000000",
+                                                    fg_color="#FFFFFF",
+                                                    width=300)
+        self.entry_modelo.place(x=200, y=70)
+        self.entry_modelo.insert(0, resultado[1])
+
+        self.label_marca = customtkinter.CTkLabel(self.frame_alterar_dados,
+                                                    text="Marca:",
+                                                    font=("Montserrat Medium", 20),
+                                                    text_color="#000000",
+                                                    fg_color="#D9D9D9")
+        self.label_marca.place(x=50, y=140)
+
+        self.entry_marca = customtkinter.CTkEntry(self.frame_alterar_dados,
+                                                    font=("Montserrat Medium", 20),
+                                                    text_color="#000000",
+                                                    fg_color="#FFFFFF",
+                                                    width=300)
+        self.entry_marca.place(x=200, y=140)
+        self.entry_marca.insert(0, resultado[2])
+
+        self.label_categoria = customtkinter.CTkLabel(self.frame_alterar_dados,
+                                                    text="Categoria:",
+                                                    font=("Montserrat Medium", 20),
+                                                    text_color="#000000",
+                                                    fg_color="#D9D9D9")
+        self.label_categoria.place(x=50, y=210)
+
+        self.entry_categoria = customtkinter.CTkEntry(self.frame_alterar_dados,
+                                                    font=("Montserrat Medium", 20),
+                                                    text_color="#000000",
+                                                    fg_color="#FFFFFF",
+                                                    width=300)
+        self.entry_categoria.place(x=200, y=210)
+        self.entry_categoria.insert(0, resultado[3])
+
+        self.label_preco = customtkinter.CTkLabel(self.frame_alterar_dados,
+                                                    text="Preço:",
+                                                    font=("Montserrat Medium", 20),
+                                                    text_color="#000000",
+                                                    fg_color="#D9D9D9")
+        self.label_preco.place(x=50, y=280)
+
+        self.entry_preco = customtkinter.CTkEntry(self.frame_alterar_dados,
+                                                    font=("Montserrat Medium", 20),
+                                                    text_color="#000000",
+                                                    fg_color="#FFFFFF",
+                                                    width=300)
+        self.entry_preco.place(x=200, y=280)
+        self.entry_preco.insert(0, resultado[4])
+
+        self.label_quant = customtkinter.CTkLabel(self.frame_alterar_dados,
+                                                    text="Quantidade:",
+                                                    font=("Montserrat Medium", 20),
+                                                    text_color="#000000",
+                                                    fg_color="#D9D9D9")
+        self.label_quant.place(x=550, y=70)
+
+        self.entry_quant = customtkinter.CTkEntry(self.frame_alterar_dados,
+                                                    font=("Montserrat Medium", 20),
+                                                    text_color="#000000",
+                                                    fg_color="#FFFFFF",
+                                                    width=300)
+        self.entry_quant.place(x=750, y=70)
+        self.entry_quant.insert(0, resultado[5])
+
+        self.label_nota = customtkinter.CTkLabel(self.frame_alterar_dados,
+                                                    text="Nota (0-5):",
+                                                    font=("Montserrat Medium", 20),
+                                                    text_color="#000000",
+                                                    fg_color="#D9D9D9")
+        self.label_nota.place(x=550, y=140)
+        self.entry_nota = customtkinter.CTkEntry(self.frame_alterar_dados,
+                                                    font=("Montserrat Medium", 20),
+                                                    text_color="#000000",
+                                                    fg_color="#FFFFFF",
+                                                    width=300)
+        self.entry_nota.place(x=750, y=140)
+        self.entry_nota.insert(0, resultado[6])
+
+        self.button_salvar_alteracoes = customtkinter.CTkButton(self.frame_alterar,
+                                                                text="Salvar Alterações",
+                                                                font=("Montserrat Medium", 20),
+                                                                fg_color="#818181",
+                                                                hover_color="#9C9C9C",
+                                                                text_color="#060505",
+                                                                bg_color="#D9D9D9",
+                                                                width=200,
+                                                                height=40,
+                                                                command=lambda: self.salvar_alteracoes(modelo_antigo))
+        self.button_salvar_alteracoes.place(x=1030, y=650)
+        self.bind("<Return>", lambda event: self.salvar_alteracoes(modelo_antigo))
+
+    def salvar_alteracoes(self, modelo_antigo):
+        try:
+            if (self.entry_modelo.get() == "" or self.entry_marca.get() == "" or self.entry_categoria.get() == "" or
+                self.entry_preco.get() == "" or self.entry_quant.get() == "" or self.entry_nota.get() == ""):
+                raise ValueError("Todos os campos devem ser preenchidos.")
+            if not self.entry_preco.get().replace('.', '', 1).isdigit():
+                raise ValueError("O campo 'Preço' deve ser um número válido.")
+            if not self.entry_quant.get().isdigit():
+                raise ValueError("O campo 'Quantidade' deve ser um número inteiro válido.")
+            if not self.entry_nota.get().replace('.', '', 1).isdigit():
+                raise ValueError("O campo 'Nota' deve ser um número válido entre 0 e 5.")
+            nota = float(self.entry_nota.get())
+            if nota < 0 or nota > 5:
+                raise ValueError("O campo 'Nota' deve estar entre 0 e 5.")
+        except ValueError as ve:
+            messagebox.showerror("Erro de Validação", str(ve))
+            return
+
+        modelo_novo = self.entry_modelo.get().title()
+        marca = self.entry_marca.get().title()
+        categoria = self.entry_categoria.get().title()
+        preco = self.entry_preco.get()
+        quant = self.entry_quant.get()
+        nota = self.entry_nota.get()
+
+        self.produto.alterar_produto(modelo_antigo, modelo_novo, marca, categoria, preco, quant, nota)
+        messagebox.showinfo("Sucesso", f"O produto '{modelo_antigo}' foi alterado para '{modelo_novo}' com sucesso.")
+        self.tela_menu()
 
     def pagina_pesquisar_produto(self):
         self.unbind_pagina()
         self.frame_menu.destroy()
+        #a fazer
 
     def pagina_remover_produto(self):
         self.dialog_remover = customtkinter.CTkInputDialog(text="Digite o modelo do produto que deseja remover:", title="Remover Produto")
@@ -416,7 +596,7 @@ class FrontModel(customtkinter.CTk):
             messagebox.showerror("Erro de Validação", str(ve))
             return
         if input_user:
-            modelo = input_user.capitalize()
+            modelo = input_user.title()
             if modelo:
                 resultado = self.produto.pesquisar_modelo_produto(modelo)
                 if resultado:
@@ -432,6 +612,7 @@ class FrontModel(customtkinter.CTk):
     def pagina_listar_todos_produtos(self):
         self.unbind_pagina()
         self.frame_menu.destroy()
+        #a fazer
 
     def pagina_exibir_um_produto(self):
         self.unbind_pagina()
@@ -501,7 +682,7 @@ class FrontModel(customtkinter.CTk):
             messagebox.showerror("Erro de Validação", str(ve))
             return
 
-        modelo = self.entry_modelo.get().capitalize()
+        modelo = self.entry_modelo.get().title()
         resultado = self.produto.exibir_um_produto(modelo)
     
         if not resultado:
