@@ -13,7 +13,8 @@ if __name__ == "__main__":
         print("Falha na conexão ao banco de dados.")
 
 
-    produto = Produto("iPhone 13", "Apple", "Smartphone", 799.99, 50, 4.8)
+    produto = Produto()
+    produto.inserir_produto("Samsung Book 4", "Samsung", "Notebook", 3499.99, 20, 4.7, conexao)
     #consulta.pesquisar("Kaiky")
     #consulta.listar_todos()
     #consulta.remover("iPhone 13")
@@ -24,7 +25,7 @@ if __name__ == "__main__":
     #consulta.alterar_quant("iPhone 13", 45)
     #consulta.alterar_nota("iPhone 13", 4.9)
     #consulta.inserir("Galaxy S21", "Samsung", "Smartphone", 699.99, 30, 4.6)
-    produto.listar_todos()
+    produto.listar_todos_produtos(conexao)
     #consulta.inserir("Book 4", "Samsung", "Notebook", 3499.99, 20, 4.7)
 
     #app = FrontModel()

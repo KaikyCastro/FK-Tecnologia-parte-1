@@ -1,18 +1,16 @@
-from database.Conexao import ConexaoBD
 from psycopg2.errors import UniqueViolation
 
 class Produto:
     def __init__(self):
-        self.con_bd = ConexaoBD()
-        self.conexao = self.con_bd.conectar()
-    
-    def inserir_produto(self, modelo, marca, categoria, preco, quant, nota):
-        self.cursor = self.conexao.cursor()
+        None
+
+    def inserir_produto(self, modelo, marca, categoria, preco, quant, nota, conexao):
+        self.cursor = conexao.cursor()
         try:
             self.cursor.execute(f"INSERT INTO produto (modelo, marca, categoria, preco, quant, nota) VALUES ('{modelo}', '{marca}', '{categoria}', '{preco}', '{quant}', '{nota}')")
         except UniqueViolation as e:
             print(f"Você está tentando inserir um modelo que já existe. \nErro: {e}")
-        self.conexao.commit()
+        conexao.commit()
         self.cursor.close()
 
     def alterar_modelo_produto(self, modelo_antigo, modelo_novo):
@@ -63,30 +61,30 @@ class Produto:
         self.conexao.commit()
         self.cursor.close()
 
-    def pesquisar_produto(self, modelo):
-        self.cursor = self.conexao.cursor()
+    def pesquisar_produto(self, modelo, conexao):
+        self.cursor = conexao.cursor()
         self.cursor.execute(f"SELECT * FROM produto WHERE modelo = '{modelo}'")
         resultado = self.cursor.fetchall()
         for linha in resultado:
             print(linha)
         self.cursor.close()
 
-    def remover_produto(self, modelo):
-        self.cursor = self.conexao.cursor()
+    def remover_produto(self, modelo, conexao):
+        self.cursor = conexao.cursor()
         self.cursor.execute(f"DELETE FROM produto WHERE modelo = '{modelo}'")
-        self.conexao.commit()
+        conexao.commit()
         self.cursor.close()
 
-    def listar_todos_produtos(self):
-        self.cursor = self.conexao.cursor()
+    def listar_todos_produtos(self, conexao):
+        self.cursor = conexao.cursor()
         self.cursor.execute("SELECT * FROM produto")
         resultado = self.cursor.fetchall()
         for linha in resultado:
             print(linha)
         self.cursor.close()
 
-    def exibir_um_produto(self, modelo):
-        self.cursor = self.conexao.cursor()
+    def exibir_um_produto(self, modelo, conexao):
+        self.cursor = conexao.cursor()
         self.cursor.execute(f"SELECT * FROM produto WHERE modelo = '{modelo}'")
         resultado = self.cursor.fetchall()
         for linha in resultado:
