@@ -99,7 +99,8 @@ class FrontModel(customtkinter.CTk):
                                                         text_color="#060505",
                                                         bg_color="#FFFFFF",
                                                         width=250,
-                                                        height=200)
+                                                        height=200,
+                                                        command=self.pagina_alterar_produto)
         self.button_alterar.place(x=510, y=150)
         self.bind("<F2>", lambda event: self.pagina_alterar_produto())
 
@@ -112,7 +113,8 @@ class FrontModel(customtkinter.CTk):
                                                         text_color="#060505",
                                                         bg_color="#FFFFFF",
                                                         width=250,
-                                                        height=200)
+                                                        height=200,
+                                                        command=self.pagina_pesquisar_produto)
         self.pesquisar_produto.place(x=920, y=150)
         self.bind("<F3>", lambda event: self.pagina_pesquisar_produto())
 
@@ -137,7 +139,8 @@ class FrontModel(customtkinter.CTk):
                                                         text_color="#060505",
                                                         bg_color="#FFFFFF",
                                                         width=250,
-                                                        height=200)
+                                                        height=200,
+                                                        command=self.pagina_listar_todos_produtos)
         self.listar_todos_produtos.place(x=510, y=400)
         self.bind("<F5>", lambda event: self.pagina_listar_todos_produtos())
 
@@ -347,7 +350,40 @@ class FrontModel(customtkinter.CTk):
 
 
     def pagina_alterar_produto(self):
-        None
+        self.frame_menu.destroy()
+
+        self.frame_alterar = customtkinter.CTkFrame(self,
+                                                    width=1280,
+                                                    height=720,
+                                                    fg_color="#FFFFFF")
+        self.frame_alterar.pack()
+
+        self.label_alterar = customtkinter.CTkLabel(self.frame_alterar,
+                                                    text="ALTERAR PRODUTO",
+                                                    font=("Montserrat Medium", 30),
+                                                    text_color="#000000",
+                                                    fg_color="#FFFFFF")
+        self.label_alterar.place(relx=0.5, y=50, anchor="center")
+
+        self.label_modelo_antigo = customtkinter.CTkLabel(self.frame_alterar,
+                                                            text="Digite o modelo do produto que deseja alterar:",
+                                                            font=("Montserrat Medium", 20),
+                                                            text_color="#000000",
+                                                            fg_color="#FFFFFF")
+        self.label_modelo_antigo.place(x=100, y=150)
+
+        self.entry_modelo_antigo = customtkinter.CTkEntry(self.frame_alterar,
+                                                            width=400,
+                                                            height=40,
+                                                            font=("Montserrat Medium", 16),
+                                                            fg_color="#D9D9D9",
+                                                            border_width=2,
+                                                            border_color="#000000",
+                                                            text_color="#000000")
+        self.entry_modelo_antigo.place(x=600, y=150)
+
+
+
 
     def pagina_pesquisar_produto(self):
         None
@@ -437,8 +473,6 @@ class FrontModel(customtkinter.CTk):
                                                         command=self.tela_menu)
         button_voltar_exibir.place(x=50, y=650)
         self.bind("<Escape>", lambda event: self.tela_menu())
-
-
 
     def exibir_produto(self):
         try:
