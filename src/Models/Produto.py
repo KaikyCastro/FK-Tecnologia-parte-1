@@ -13,55 +13,13 @@ class Produto:
         conexao.commit()
         self.cursor.close()
 
-    def alterar_modelo_produto(self, modelo_antigo, modelo_novo):
-        self.cursor = self.conexao.cursor()
-        self.cursor.execute(f"SELECT * FROM produto WHERE modelo = '{modelo_antigo}'")
-        resultado = self.cursor.fetchall()
-        self.cursor.execute(f"UPDATE produto SET modelo = '{modelo_novo}' WHERE id = {resultado[0][0]}")
-        self.conexao.commit()
+    def alterar_produto(self, modelo_antigo, modelo_novo, marca, categoria, preco, quant, nota, conexao):
+        self.cursor = conexao.cursor()
+        self.cursor.execute(f"UPDATE produto SET modelo = '{modelo_novo}', marca = '{marca}', categoria = '{categoria}', preco = '{preco}', quant = '{quant}', nota = '{nota}' WHERE modelo = '{modelo_antigo}'")
+        conexao.commit()
         self.cursor.close()
 
-    def alterar_marca_produto(self, modelo, marca_nova):
-        self.cursor = self.conexao.cursor()
-        self.cursor.execute(f"SELECT * FROM produto WHERE modelo = '{modelo}'")
-        resultado = self.cursor.fetchall()
-        self.cursor.execute(f"UPDATE produto SET marca = '{marca_nova}' WHERE id = {resultado[0][0]}")
-        self.conexao.commit()
-        self.cursor.close()
-
-    def alterar_categoria_produto(self, modelo, categoria_nova):
-        self.cursor = self.conexao.cursor()
-        self.cursor.execute(f"SELECT * FROM produto WHERE modelo = '{modelo}'")
-        resultado = self.cursor.fetchall()
-        self.cursor.execute(f"UPDATE produto SET categoria = '{categoria_nova}' WHERE id = {resultado[0][0]}")
-        self.conexao.commit()
-        self.cursor.close()
-
-    def alterar_preco_produto(self, modelo, preco_novo):
-        self.cursor = self.conexao.cursor()
-        self.cursor.execute(f"SELECT * FROM produto WHERE modelo = '{modelo}'")
-        resultado = self.cursor.fetchall()
-        self.cursor.execute(f"UPDATE produto SET preco = '{preco_novo}' WHERE id = {resultado[0][0]}")
-        self.conexao.commit()
-        self.cursor.close()
-
-    def alterar_quant_produto(self, modelo, quant_nova):
-        self.cursor = self.conexao.cursor()
-        self.cursor.execute(f"SELECT * FROM produto WHERE modelo = '{modelo}'")
-        resultado = self.cursor.fetchall()
-        self.cursor.execute(f"UPDATE produto SET quant = '{quant_nova}' WHERE id = {resultado[0][0]}")
-        self.conexao.commit()
-        self.cursor.close()
-
-    def alterar_nota_produto(self, modelo, nota_nova):
-        self.cursor = self.conexao.cursor()
-        self.cursor.execute(f"SELECT * FROM produto WHERE modelo = '{modelo}'")
-        resultado = self.cursor.fetchall()
-        self.cursor.execute(f"UPDATE produto SET nota = '{nota_nova}' WHERE id = {resultado[0][0]}")
-        self.conexao.commit()
-        self.cursor.close()
-
-    def pesquisar_produto(self, modelo, conexao):
+    def pesquisar_modelo_produto(self, modelo, conexao):
         self.cursor = conexao.cursor()
         self.cursor.execute(f"SELECT * FROM produto WHERE modelo = '{modelo}'")
         resultado = self.cursor.fetchall()
@@ -87,7 +45,5 @@ class Produto:
         self.cursor = conexao.cursor()
         self.cursor.execute(f"SELECT * FROM produto WHERE modelo = '{modelo}'")
         resultado = self.cursor.fetchall()
-        for linha in resultado:
-            print(linha)
-        self.cursor.close()
+        print(resultado)
 
