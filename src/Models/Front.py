@@ -2,6 +2,8 @@ import customtkinter
 from PIL import Image
 from tkinter import END, messagebox
 from .Produto import Produto
+from string import capwords
+
 class FrontModel(customtkinter.CTk):
     def __init__(self):
         super().__init__()
@@ -12,7 +14,17 @@ class FrontModel(customtkinter.CTk):
         self._set_appearance_mode("light")
         self.tela_inicial()
         self.produto = Produto()
-        
+
+    def unbind_pagina(self):
+        self.unbind("<F1>")
+        self.unbind("<F2>")
+        self.unbind("<F3>")
+        self.unbind("<F4>")
+        self.unbind("<F5>")
+        self.unbind("<F6>")
+        self.unbind("<Escape>")
+        self.unbind("<Return>")
+
 
     def tela_inicial(self):
         if hasattr(self, 'frame_menu'):
@@ -64,6 +76,9 @@ class FrontModel(customtkinter.CTk):
             self.frame_listar.destroy()
         if hasattr(self, 'frame_exibir'):
             self.frame_exibir.destroy()
+
+        self.unbind("<Return>")
+        self.unbind("<Escape>")
 
         self.frame_menu = customtkinter.CTkFrame(self,
                                                     width=1280,
@@ -171,6 +186,7 @@ class FrontModel(customtkinter.CTk):
         self.bind("<Escape>", lambda event: self.tela_inicial())
 
     def pagina_cadastrar_produto(self, event=None):
+        self.unbind_pagina()
         self.frame_menu.destroy()
 
         self.frame_cadastro = customtkinter.CTkFrame(self,
@@ -350,6 +366,7 @@ class FrontModel(customtkinter.CTk):
 
 
     def pagina_alterar_produto(self):
+        self.unbind_pagina()
         self.frame_menu.destroy()
 
         self.frame_alterar = customtkinter.CTkFrame(self,
@@ -386,7 +403,8 @@ class FrontModel(customtkinter.CTk):
 
 
     def pagina_pesquisar_produto(self):
-        None
+        self.unbind_pagina()
+        self.frame_menu.destroy()
 
     def pagina_remover_produto(self):
         self.dialog_remover = customtkinter.CTkInputDialog(text="Digite o modelo do produto que deseja remover:", title="Remover Produto")
@@ -412,10 +430,11 @@ class FrontModel(customtkinter.CTk):
                     messagebox.showinfo("Produto Não Encontrado", f"Nenhum produto encontrado com o modelo '{modelo}'.")
 
     def pagina_listar_todos_produtos(self):
-
-        None
+        self.unbind_pagina()
+        self.frame_menu.destroy()
 
     def pagina_exibir_um_produto(self):
+        self.unbind_pagina()
         self.frame_menu.destroy()
 
         self.frame_exibir = customtkinter.CTkFrame(self,
@@ -481,9 +500,10 @@ class FrontModel(customtkinter.CTk):
         except ValueError as ve:
             messagebox.showerror("Erro de Validação", str(ve))
             return
-        
+
         modelo = self.entry_modelo.get().capitalize()
         resultado = self.produto.exibir_um_produto(modelo)
+    
         if not resultado:
             messagebox.showinfo("Produto Não Encontrado", f"Nenhum produto encontrado com o modelo '{modelo}'.")
             self.entry_modelo.delete(0, END)
