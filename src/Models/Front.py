@@ -2,6 +2,12 @@ import customtkinter
 from PIL import Image
 from tkinter import END, messagebox
 from .Produto import Produto
+from fpdf import FPDF
+from datetime import datetime
+import os
+import subprocess
+import sys
+from logger_config import log
 
 class FrontModel(customtkinter.CTk):
     def __init__(self):
@@ -21,6 +27,7 @@ class FrontModel(customtkinter.CTk):
         self.unbind("<F4>")
         self.unbind("<F5>")
         self.unbind("<F6>")
+        self.unbind("<F7>")
         self.unbind("<Escape>")
         self.unbind("<Return>")
 
@@ -28,6 +35,8 @@ class FrontModel(customtkinter.CTk):
     def tela_inicial(self):
         if hasattr(self, 'frame_menu'):
             self.frame_menu.destroy()
+
+        self.unbind_pagina()
 
         self.frame_inicial = customtkinter.CTkFrame(self, 
                                                     width=1280, 
@@ -171,6 +180,8 @@ class FrontModel(customtkinter.CTk):
         self.exibir_um_produto.place(x=920, y=400)
         self.bind("<F6>", lambda event: self.pagina_exibir_um_produto())
 
+        self.bind("<F7>", lambda event: self.evento_gerar_relatorio())
+
         self.buttor_voltar_tela_inicial = customtkinter.CTkButton(self.frame_menu,
                                                                     text="Voltar",
                                                                     font=("Montserrat Medium", 20),
@@ -184,6 +195,106 @@ class FrontModel(customtkinter.CTk):
         self.buttor_voltar_tela_inicial.place(x=50, y=650)
         self.bind("<Escape>", lambda event: self.tela_inicial())
 
+    def evento_gerar_relatorio(self, event=None):
+        try:
+            nome_arquivo = self.gerar_relatorio_pdf()
+            messagebox.showinfo("Sucesso", f"Relatório PDF gerado com sucesso!\nSalvo como: {nome_arquivo}")
+        except Exception as e:
+            messagebox.showerror("Erro", f"Erro ao gerar relatório PDF: {e}")
+            log.error(f"Erro ao gerar relatório PDF: {e}")
+
+    
+    def gerar_relatorio_pdf(self):
+        """
+        Gera um PDF com um resumo do estoque e o log de atividades.
+        Versão final e limpa.
+        """
+        try:
+            log_file_path = 'logs/atividades.log'
+            
+            pdf = FPDF()
+            pdf.add_page()
+
+            # --- TÍTULO PRINCIPAL ---
+            pdf.set_font('Helvetica', 'B', 16)
+            pdf.cell(w=0, h=10, txt='Relatório Completo - FK Tecnologia', border=0, ln=1, align='C')
+            pdf.ln(5)
+
+            # --- SEÇÃO 1: RESUMO DO ESTOQUE ATUAL ---
+            pdf.set_font('Helvetica', 'B', 14)
+            pdf.cell(w=0, h=10, txt='1. Resumo do Estoque', border=0, ln=1, align='L')
+            pdf.ln(2)
+
+            # Busca os dados de resumo no banco de dados
+            total_produtos = self.produto.contar_total_produtos()
+            valor_estoque = self.produto.calcular_valor_total_estoque()
+            lista_modelos_marcas = self.produto.listar_todos_modelos_marcas()
+
+            pdf.set_font('Helvetica', '', 12)
+            pdf.cell(w=0, h=8, txt=f"   - Total de Produtos Cadastrados: {total_produtos}", border=0, ln=1)
+            pdf.cell(w=0, h=8, txt=f"   - Valor Total do Estoque: R$ {valor_estoque:,.2f}".replace(",", "X").replace(".", ",").replace("X", "."), border=0, ln=1)
+            pdf.ln(5)
+
+            pdf.set_font('Helvetica', 'B', 12)
+            pdf.cell(w=0, h=8, txt="   - Inventário de Modelos e Marcas:", border=0, ln=1)
+            pdf.set_font('Courier', '', 10)
+            
+            largura_util = pdf.w - 2 * pdf.l_margin
+
+            if lista_modelos_marcas:
+                for modelo, marca in lista_modelos_marcas:
+                    marca_str = str(marca)
+                    modelo_str = str(modelo)
+                    # Coluna 1: MARCA
+                    pdf.cell(w=largura_util * 0.45, h=6, txt=f"     - {marca_str}", border=0)
+                    # Coluna 2: MODELO
+                    pdf.cell(w=largura_util * 0.55, h=6, txt=f"| {modelo_str}", border=0, ln=1)
+            else:
+                pdf.cell(w=0, h=6, txt="     Nenhum produto cadastrado.", border=0, ln=1)
+
+            pdf.ln(10)
+
+            # --- SEÇÃO 2: LOG DE ATIVIDADES ---
+            pdf.set_font('Helvetica', 'B', 14)
+            pdf.cell(w=0, h=10, txt='2. Histórico de Atividades', border=0, ln=1, align='L')
+            pdf.ln(2)
+            pdf.set_font('Courier', '', 8)
+            
+            if os.path.exists(log_file_path):
+                with open(log_file_path, 'r', encoding='utf-8') as f:
+                    for linha in f:
+                        linha_strip = linha.strip()
+                        palavras = linha_strip.split(' ')
+                        altura_linha = 5
+                        pdf.set_x(pdf.l_margin)
+
+                        for palavra in palavras:
+                            texto_para_escrever = ' ' + palavra
+                            largura_palavra = pdf.get_string_width(texto_para_escrever)
+                            
+                            if pdf.get_x() + largura_palavra > (pdf.w - pdf.r_margin):
+                                pdf.ln(altura_linha)
+                                pdf.set_x(pdf.l_margin)
+                                pdf.cell(txt=palavra)
+                            else:
+                                pdf.cell(txt=texto_para_escrever)
+                                
+                        pdf.ln(altura_linha)
+            else:
+                pdf.cell(w=0, h=5, txt="Nenhuma atividade registrada ainda.", border=0, ln=1)
+            
+            nome_arquivo = f"relatorio_completo_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.pdf"
+            pdf.output(nome_arquivo)
+            
+            return nome_arquivo
+        
+        except Exception as e:
+            # Mantemos o log de erro, mas removemos os prints do terminal
+            # Supondo que você tenha o objeto 'log' importado e configurado
+            log.error(f"FALHA CRÍTICA AO GERAR RELATÓRIO PDF: {e}")
+            # Re-levanta a exceção para que o método que chamou saiba que algo deu errado
+            raise e
+            
     def pagina_cadastrar_produto(self, event=None):
         self.unbind_pagina()
         self.frame_menu.destroy()
@@ -347,12 +458,12 @@ class FrontModel(customtkinter.CTk):
             messagebox.showerror("Erro de Validação", str(ve))
             return
 
-        modelo = self.entry_modelo.get().title()
-        marca = self.entry_marca.get().title()
-        categoria = self.entry_categoria.get().title()
-        preco = self.entry_preco.get()
-        quant = self.entry_quant.get()
-        nota = self.entry_nota.get()
+        modelo = self.entry_modelo.get().title().strip()
+        marca = self.entry_marca.get().title().strip()
+        categoria = self.entry_categoria.get().title().strip()
+        preco = self.entry_preco.get().strip()
+        quant = self.entry_quant.get().strip()
+        nota = self.entry_nota.get().strip()
 
         self.produto.inserir_produto(modelo, marca, categoria, preco, quant, nota)
 
@@ -436,7 +547,7 @@ class FrontModel(customtkinter.CTk):
             messagebox.showerror("Erro de Validação", str(ve))
             return
 
-        modelo_antigo = self.entry_modelo_antigo.get().title()
+        modelo_antigo = self.entry_modelo_antigo.get().title().strip()
         resultado = self.produto.pesquisar_modelo_produto(modelo_antigo)
     
         self.frame_alterar_dados = customtkinter.CTkFrame(self.frame_alterar,
@@ -572,12 +683,12 @@ class FrontModel(customtkinter.CTk):
             messagebox.showerror("Erro de Validação", str(ve))
             return
 
-        modelo_novo = self.entry_modelo.get().title()
-        marca = self.entry_marca.get().title()
-        categoria = self.entry_categoria.get().title()
-        preco = self.entry_preco.get()
-        quant = self.entry_quant.get()
-        nota = self.entry_nota.get()
+        modelo_novo = self.entry_modelo.get().title().strip()
+        marca = self.entry_marca.get().title().strip()
+        categoria = self.entry_categoria.get().title().strip()
+        preco = self.entry_preco.get().strip()
+        quant = self.entry_quant.get().strip()
+        nota = self.entry_nota.get().strip()
 
         self.produto.alterar_produto(modelo_antigo, modelo_novo, marca, categoria, preco, quant, nota)
         messagebox.showinfo("Sucesso", f"O produto '{modelo_antigo}' foi alterado para '{modelo_novo}' com sucesso.")
@@ -684,7 +795,7 @@ class FrontModel(customtkinter.CTk):
 
     def pagina_remover_produto(self):
         self.dialog_remover = customtkinter.CTkInputDialog(text="Digite o modelo do produto que deseja remover:", title="Remover Produto")
-        input_user = self.dialog_remover.get_input()
+        input_user = self.dialog_remover.get_input().strip()
         try:
             if input_user == "":
                 raise ValueError("O campo 'Modelo' deve ser preenchido.")
@@ -844,7 +955,7 @@ class FrontModel(customtkinter.CTk):
             messagebox.showerror("Erro de Validação", str(ve))
             return
 
-        modelo = self.entry_modelo.get().title()
+        modelo = self.entry_modelo.get().title().strip()
         resultado = self.produto.exibir_um_produto(modelo)
     
         if not resultado:
