@@ -41,4 +41,13 @@ class Produto:
         self.cursor.execute(f"SELECT * FROM produto WHERE modelo = '{modelo}'")
         resultado = self.cursor.fetchone()
         return resultado
-
+    
+    def pesquisar_produto_parcial (self, modelo_parcial) -> list:
+        self.cursor = self.conexao.cursor()
+        try:
+            self.cursor.execute(f"SELECT * FROM produto WHERE modelo ILIKE '%{modelo_parcial}%'")
+            resultado = self.cursor.fetchall()
+            return resultado
+        except Exception as e:
+            print(f"Erro ao pesquisar produto: {e}")
+            return []

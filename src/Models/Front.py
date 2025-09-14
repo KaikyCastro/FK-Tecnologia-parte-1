@@ -363,6 +363,8 @@ class FrontModel(customtkinter.CTk):
         self.entry_quant.delete(0, END)
         self.entry_nota.delete(0, END)
 
+        messagebox.showinfo("Sucesso", f"O produto '{modelo}' foi cadastrado com sucesso.")
+
 
     def pagina_alterar_produto(self):
         self.unbind_pagina()
@@ -584,7 +586,101 @@ class FrontModel(customtkinter.CTk):
     def pagina_pesquisar_produto(self):
         self.unbind_pagina()
         self.frame_menu.destroy()
-        #a fazer
+        
+        self.frame_pesquisar = customtkinter.CTkFrame(self,
+                                                    width=1280,
+                                                    height=720,
+                                                    fg_color="#FFFFFF")
+        self.frame_pesquisar.pack()
+
+        self.label_pesquisar = customtkinter.CTkLabel(self.frame_pesquisar,
+                                                    text="PESQUISAR PRODUTO",
+                                                    font=("Montserrat Medium", 30),
+                                                    text_color="#000000",
+                                                    fg_color="#FFFFFF")
+        self.label_pesquisar.place(relx=0.5, y=50, anchor="center")
+
+        self.label_modelo_parcial = customtkinter.CTkLabel(self.frame_pesquisar,
+                                                    text="Digite o modelo do produto que deseja pesquisar:",
+                                                    font=("Montserrat Medium", 16),
+                                                    text_color="#000000",
+                                                    fg_color="#FFFFFF")
+        self.label_modelo_parcial.place(relx=0.5, y=150, anchor="center")
+
+        self.entry_modelo_parcial = customtkinter.CTkEntry(self.frame_pesquisar,
+                                                            width=400,
+                                                            height=40,
+                                                            placeholder_text="Modelo do Produto",
+                                                            placeholder_text_color="#494949",
+                                                            font=("Montserrat Medium", 16),
+                                                            fg_color="#D9D9D9",
+                                                            border_width=2,
+                                                            border_color="#000000",
+                                                            text_color="#000000",
+                                                            )
+        self.entry_modelo_parcial.place(relx=0.5, y=200, anchor="center")
+
+        self.resultado_frame = customtkinter.CTkScrollableFrame(self.frame_pesquisar,
+                                                    width=1100,
+                                                    height=370,
+                                                    fg_color="#D9D9D9")
+        self.resultado_frame.place(relx=0.5, y=440, anchor="center")
+
+        self.entry_modelo_parcial.bind("<KeyRelease>", self.atualizar_lista_produtos)
+        self.atualizar_lista_produtos()
+
+        button_voltar_pesquisar = customtkinter.CTkButton(self.frame_pesquisar,
+                                                        text="Voltar",
+                                                        font=("Montserrat Medium", 20),
+                                                        fg_color="#818181",
+                                                        hover_color="#9C9C9C",
+                                                        text_color="#060505",
+                                                        bg_color="#FFFFFF",
+                                                        width=100,
+                                                        height=40,
+                                                        command=self.tela_menu)
+        button_voltar_pesquisar.place(x=50, y=650)
+        self.bind("<Escape>", lambda event: self.tela_menu())
+
+
+    def atualizar_lista_produtos(self, event=None):
+        termo_busca = self.entry_modelo_parcial.get().strip().title()
+
+        for widget in self.resultado_frame.winfo_children():
+            widget.destroy()
+
+        lista_produtos = self.produto.pesquisar_produto_parcial(termo_busca)
+
+        if not lista_produtos:
+            label_sem_resultado = customtkinter.CTkLabel(self.resultado_frame,
+                                                        text="Nenhum produto encontrado.",
+                                                        font=("Montserrat Medium", 20),
+                                                        text_color="#000000",
+                                                        fg_color="#D9D9D9")
+            label_sem_resultado.place(relx=0.5, rely=0.5, anchor="center")
+            return
+        
+        for produto in lista_produtos:
+            modelo = produto[1]
+            marca = produto[2]
+            categoria = produto[3]
+            preco = produto[4]
+            quant = produto[5]
+            nota = produto[6]
+
+            label_produto = customtkinter.CTkLabel(self.resultado_frame,
+                                                    text=f"Modelo: {modelo} | Marca: {marca} | Categoria: {categoria} | Preço: R$ {preco:.2f} | Quantidade: {quant} | Nota: {nota:.1f}",
+                                                    font=("Montserrat Medium", 18),
+                                                    text_color="#000000",
+                                                    fg_color="#D9D9D9")
+            label_produto.pack(pady=10)
+
+            label_separar = customtkinter.CTkLabel(self.resultado_frame,
+                                                    text="________________________________________________________________________________________________________________________________________________________________",
+                                                    font=("Montserrat Medium", 14),
+                                                    text_color="#000000",
+                                                    fg_color="#D9D9D9")
+            label_separar.pack()
 
     def pagina_remover_produto(self):
         self.dialog_remover = customtkinter.CTkInputDialog(text="Digite o modelo do produto que deseja remover:", title="Remover Produto")
@@ -612,7 +708,73 @@ class FrontModel(customtkinter.CTk):
     def pagina_listar_todos_produtos(self):
         self.unbind_pagina()
         self.frame_menu.destroy()
-        #a fazer
+        
+        self.frame_listar = customtkinter.CTkFrame(self,
+                                                    width=1280,
+                                                    height=720,
+                                                    fg_color="#FFFFFF")
+        self.frame_listar.pack()
+
+        self.label_todos_produtos = customtkinter.CTkLabel(self.frame_listar,
+                                                    text="LISTA DE TODOS OS PRODUTOS",
+                                                    font=("Montserrat Medium", 30),
+                                                    text_color="#000000",
+                                                    fg_color="#FFFFFF")
+        self.label_todos_produtos.place(relx=0.5, y=50, anchor="center")
+
+        produtos = self.produto.listar_todos_produtos()
+        if not produtos:
+            messagebox.showinfo("Nenhum Produto", "Não há produtos cadastrados no sistema.")
+            self.tela_menu()
+            return
+
+        label_modelo = customtkinter.CTkLabel(self.frame_listar,
+                                                text="Modelo     |     Marca      |     Categoria     |     Preço     |     Quantidade     |     Nota",
+                                                font=("Montserrat Medium", 30),
+                                                text_color="#000000",
+                                                fg_color="#FFFFFF")
+        label_modelo.place(relx=0.5, y=180, anchor="center")
+
+        self.scrollable_frame = customtkinter.CTkScrollableFrame(self.frame_listar,
+                                                                width=1200,
+                                                                height=400,
+                                                                fg_color="#D9D9D9")
+        self.scrollable_frame.place(relx=0.5, y=410, anchor="center")
+
+        for produto in produtos:
+            modelo = produto[1]
+            marca = produto[2]
+            categoria = produto[3]
+            preco = produto[4]
+            quant = produto[5]
+            nota = produto[6]
+
+            label_produto = customtkinter.CTkLabel(self.scrollable_frame,
+                                                    text=f"{modelo}       |       {marca}       |       {categoria}       |       R$ {preco:.2f}       |       {quant}       |       {nota:.1f}",
+                                                    font=("Montserrat Medium", 22),
+                                                    text_color="#000000",
+                                                    fg_color="#D9D9D9")
+            label_produto.pack(pady=10)
+
+            label_separar = customtkinter.CTkLabel(self.scrollable_frame,
+                                                    text="______________________________________________________________________________________________________________________________",
+                                                    font=("Montserrat Medium", 20),
+                                                    text_color="#000000",
+                                                    fg_color="#D9D9D9")
+            label_separar.pack()
+
+        button_voltar_listar = customtkinter.CTkButton(self.frame_listar,
+                                                        text="Voltar",
+                                                        font=("Montserrat Medium", 20),
+                                                        fg_color="#818181",
+                                                        hover_color="#9C9C9C",
+                                                        text_color="#060505",
+                                                        bg_color="#FFFFFF",
+                                                        width=100,
+                                                        height=40,
+                                                        command=self.tela_menu)
+        button_voltar_listar.place(x=50, y=650)
+        self.bind("<Escape>", lambda event: self.tela_menu())
 
     def pagina_exibir_um_produto(self):
         self.unbind_pagina()
