@@ -1,2 +1,5 @@
 14/09/2025 13:45:49 - INFO - Produto inserido: Modelo='S25', Marca='Samsung', Categoria='Smartphone', Preço='3500', Quantidade='10', Nota='5'
 14/09/2025 13:46:19 - INFO - Produto alterado: Modelo Antigo='Samsung Book 4', Modelo Novo='Book 4', Marca='Samsung', Categoria='Notebook', Preço='3499.99', Quantidade='20', Nota='4.70'
+14/09/2025 13:48:51 - INFO - Produto inserido: Modelo='A70', Marca='Samsung', Categoria='Smartphone', Preço='1500', Quantidade='25', Nota='4.3'
+14/09/2025 13:49:08 - INFO - Produto alterado: Modelo Antigo='A21', Modelo Novo='A31', Marca='Samsung Galaxy', Categoria='Smartphone', Preço='900.00', Quantidade='30', Nota='3.30'
+14/09/2025 13:49:37 - INFO - Produto removido: Modelo='A31'
