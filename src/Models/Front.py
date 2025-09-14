@@ -465,6 +465,12 @@ class FrontModel(customtkinter.CTk):
         quant = self.entry_quant.get().strip()
         nota = self.entry_nota.get().strip()
 
+        try:
+            if self.produto.pesquisar_modelo_produto(modelo):
+                raise ValueError("Modelo já cadastrado. Use outro modelo.")
+        except ValueError as ve:
+            messagebox.showerror("Erro de Validação", str(ve))
+            return
         self.produto.inserir_produto(modelo, marca, categoria, preco, quant, nota)
 
         self.entry_modelo.delete(0, END)
@@ -474,7 +480,6 @@ class FrontModel(customtkinter.CTk):
         self.entry_quant.delete(0, END)
         self.entry_nota.delete(0, END)
 
-        messagebox.showinfo("Sucesso", f"O produto '{modelo}' foi cadastrado com sucesso.")
 
 
     def pagina_alterar_produto(self):
