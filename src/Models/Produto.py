@@ -8,13 +8,41 @@ class Produto:
         self.conexao = self.conn.conectar()
 
     def inserir_produto(self, modelo, marca, categoria, preco, quant, nota):
-        self.cursor = self.conexao.cursor()
+        """
+        Insere um novo produto no banco de dados de forma segura,
+        protegida contra SQL Injection.
+        """
+        # A query SQL com placeholders (%s) em vez de valores diretos.
+        sql = """
+            INSERT INTO produto (modelo, marca, categoria, preco, quant, nota) 
+            VALUES (%s, %s, %s, %s, %s, %s)
+        """
+        # Uma tupla contendo os valores na ordem correta dos placeholders.
+        valores = (modelo, marca, categoria, preco, quant, nota)
+
+        cursor = None
         try:
-            self.cursor.execute(f"INSERT INTO produto (modelo, marca, categoria, preco, quant, nota) VALUES ('{modelo}', '{marca}', '{categoria}', '{preco}', '{quant}', '{nota}')")
-        except UniqueViolation as e:
-            print(f"Você está tentando inserir um modelo que já existe. \nErro: {e}")
-        self.conexao.commit()
-        self.cursor.close()
+            cursor = self.conexao.cursor()
+            # A biblioteca do banco de dados substitui os %s pelos valores
+            # de forma segura, prevenindo injeção de SQL.
+            cursor.execute(sql, valores)
+            self.conexao.commit() # Salva as alterações no banco
+            print(f"Produto '{modelo}' inserido com sucesso.")
+
+        except UniqueViolation:
+            # É uma boa prática reverter a transação em caso de erro.
+            self.conexao.rollback()
+            print(f"ERRO: O modelo '{modelo}' já existe no banco de dados.")
+        
+        except Exception as e:
+            # Captura outros possíveis erros de banco de dados.
+            self.conexao.rollback()
+            print(f"Ocorreu um erro ao inserir o produto: {e}")
+
+        finally:
+            # Garante que o cursor seja sempre fechado, mesmo se ocorrer um erro.
+            if cursor:
+                cursor.close()
 
         log.info(f"Produto inserido: Modelo='{modelo}', Marca='{marca}', Categoria='{categoria}', Preço='{preco}', Quantidade='{quant}', Nota='{nota}'")
 
