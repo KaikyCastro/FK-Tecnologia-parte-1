@@ -14,6 +14,7 @@ class Produto:
         except UniqueViolation as e:
             print(f"Você está tentando inserir um modelo que já existe. \nErro: {e}")
         self.conexao.commit()
+        self.cursor.close()
 
         log.info(f"Produto inserido: Modelo='{modelo}', Marca='{marca}', Categoria='{categoria}', Preço='{preco}', Quantidade='{quant}', Nota='{nota}'")
 
@@ -21,6 +22,7 @@ class Produto:
         self.cursor = self.conexao.cursor()
         self.cursor.execute(f"UPDATE produto SET modelo = '{modelo_novo}', marca = '{marca}', categoria = '{categoria}', preco = '{preco}', quant = '{quant}', nota = '{nota}' WHERE modelo = '{modelo_antigo}'")
         self.conexao.commit()
+        self.cursor.close()
 
         log.info(f"Produto alterado: Modelo Antigo='{modelo_antigo}', Modelo Novo='{modelo_novo}', Marca='{marca}', Categoria='{categoria}', Preço='{preco}', Quantidade='{quant}', Nota='{nota}'")
 
@@ -28,14 +30,16 @@ class Produto:
         self.cursor = self.conexao.cursor()
         self.cursor.execute(f"SELECT * FROM produto WHERE modelo = '{modelo}'")
         resultado = self.cursor.fetchone()
-        return resultado
+        self.cursor.close()
 
         log.info(f"Pesquisa de produto realizada para o modelo: '{modelo}'")
+        return resultado
     
     def remover_produto(self, modelo):
         self.cursor = self.conexao.cursor()
         self.cursor.execute(f"DELETE FROM produto WHERE modelo = '{modelo}'")
         self.conexao.commit()
+        self.cursor.close()
 
         log.info(f"Produto removido: Modelo='{modelo}'")
 
@@ -49,28 +53,33 @@ class Produto:
         self.cursor = self.conexao.cursor()
         self.cursor.execute(f"SELECT * FROM produto WHERE modelo = '{modelo}'")
         resultado = self.cursor.fetchone()
-        return resultado
+        self.cursor.close()
     
         log.info(f"Exibição de produto realizada para o modelo: '{modelo}'")
+        return resultado
     
     def pesquisar_produto_parcial (self, modelo_parcial) -> list:
         self.cursor = self.conexao.cursor()
         try:
             self.cursor.execute(f"SELECT * FROM produto WHERE modelo ILIKE '%{modelo_parcial}%'")
             resultado = self.cursor.fetchall()
+            self.cursor.close()
             return resultado
         except Exception as e:
             print(f"Erro ao pesquisar produto: {e}")
+            self.cursor.close()
             return []
-
+        
     def contar_total_produtos(self):
         try:
             self.cursor = self.conexao.cursor()
             self.cursor.execute("SELECT COUNT(*) FROM produto")
             total = self.cursor.fetchone()
+            self.cursor.close()
             return total[0] if total else 0
         except Exception as e:
             print(f"Erro ao contar produtos: {e}")
+            self.cursor.close()
             return 0
         
     def calcular_valor_total_estoque(self):
@@ -78,17 +87,21 @@ class Produto:
             self.cursor = self.conexao.cursor()
             self.cursor.execute("SELECT SUM(preco * quant) FROM produto")
             total_valor = self.cursor.fetchone()
+            self.cursor.close()
             return total_valor[0] if total_valor and total_valor[0] is not None else 0.0
         except Exception as e:
             print(f"Erro ao calcular valor total do estoque: {e}")
+            self.cursor.close()
             return 0.0
-        
+                
     def listar_todos_modelos_marcas(self):
         try:
             self.cursor = self.conexao.cursor()
             self.cursor.execute("SELECT modelo, marca FROM produto")
             resultados = self.cursor.fetchall()
+            self.cursor.close()
             return resultados
         except Exception as e:
             print(f"Erro ao listar modelos e marcas: {e}")
+            self.cursor.close()
             return []
