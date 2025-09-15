@@ -480,7 +480,7 @@ class FrontModel(customtkinter.CTk):
         self.entry_quant.delete(0, END)
         self.entry_nota.delete(0, END)
 
-
+        messagebox.showinfo("Sucesso", f"O produto '{modelo}' foi cadastrado com sucesso.")
 
     def pagina_alterar_produto(self):
         self.unbind_pagina()
@@ -800,7 +800,7 @@ class FrontModel(customtkinter.CTk):
 
     def pagina_remover_produto(self):
         self.dialog_remover = customtkinter.CTkInputDialog(text="Digite o modelo do produto que deseja remover:", title="Remover Produto")
-        input_user = self.dialog_remover.get_input().strip()
+        input_user = self.dialog_remover.get_input()
         try:
             if input_user == "":
                 raise ValueError("O campo 'Modelo' deve ser preenchido.")
@@ -808,7 +808,7 @@ class FrontModel(customtkinter.CTk):
             messagebox.showerror("Erro de Validação", str(ve))
             return
         if input_user:
-            modelo = input_user.title()
+            modelo = input_user.title().strip()
             if modelo:
                 resultado = self.produto.pesquisar_modelo_produto(modelo)
                 if resultado:

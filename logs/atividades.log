@@ -12,3 +12,11 @@
 14/09/2025 14:04:12 - INFO - Produto inserido: Modelo='A70', Marca='Samsung', Categoria='Smartphone', Preço='1500.00', Quantidade='25', Nota='4.3'
 14/09/2025 14:05:08 - INFO - Produto alterado: Modelo Antigo='Galaxy Book4 Pro', Modelo Novo='Galaxy Book 4 Pro', Marca='Samsung', Categoria='Notebook', Preço='8999.00', Quantidade='25', Nota='4.60'
 
+15/09/2025 14:25:40 - INFO - Produto inserido: Modelo='Xps 17', Marca='Asus', Categoria='Notebook', Preço='5000', Quantidade='10', Nota='4.3'
+15/09/2025 14:26:18 - INFO - Produto alterado: Modelo Antigo='Xps 17', Modelo Novo='Xps 17', Marca='Dell', Categoria='Notebook', Preço='5000.00', Quantidade='10', Nota='4.30'
+15/09/2025 14:27:12 - INFO - Produto removido: Modelo='Magic Keyboard'
+15/09/2025 14:27:38 - INFO - Produto removido: Modelo='Xps 17'
+15/09/2025 14:40:42 - INFO - Produto inserido: Modelo='Sei N', Marca='Dawd', Categoria='Awda', Preço='100', Quantidade='50', Nota='3'
+15/09/2025 14:40:56 - INFO - Produto inserido: Modelo='Adasd', Marca='Adaw', Categoria='Daw', Preço='10', Quantidade='30', Nota='2'
+15/09/2025 14:41:05 - INFO - Produto removido: Modelo='Sei N'
+15/09/2025 14:41:21 - INFO - Produto removido: Modelo='Adasd'
